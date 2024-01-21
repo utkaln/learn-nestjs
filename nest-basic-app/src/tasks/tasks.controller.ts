@@ -6,10 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task, TaskStatus } from './task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { SearchTaskDto } from './dto/search-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -17,8 +19,14 @@ export class TasksController {
   constructor(private taskService: TasksService) {}
 
   @Get()
-  getAllTasks(): Task[] {
-    return this.taskService.getAllTasks();
+  getTasks(@Query() searchDto: SearchTaskDto): Task[] {
+    // if search criteria available in query param
+    if (Object.keys(searchDto).length) {
+      return this.taskService.searchTasks(searchDto);
+    } else {
+      // if no search term in query param
+      return this.taskService.getAllTasks();
+    }
   }
 
   @Get('/:id')

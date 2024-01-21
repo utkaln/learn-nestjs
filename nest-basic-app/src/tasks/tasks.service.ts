@@ -4,6 +4,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 
 // Used for creating unique task identity
 import { v4 as uuidv4 } from 'uuid';
+import { SearchTaskDto } from './dto/search-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -11,6 +12,22 @@ export class TasksService {
 
   // default methods are of type public
   getAllTasks(): Task[] {
+    return this.tasks;
+  }
+
+  searchTasks(searchDto: SearchTaskDto): Task[] {
+    const { searchTerm, taskStatus } = searchDto;
+
+    // if search term entered
+    if (searchTerm) {
+      this.tasks = this.tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchTerm) ||
+          task.description.toLowerCase().includes(searchTerm),
+      );
+    } else if (taskStatus) {
+      this.tasks = this.tasks.filter((task) => task.status === taskStatus);
+    }
     return this.tasks;
   }
 
