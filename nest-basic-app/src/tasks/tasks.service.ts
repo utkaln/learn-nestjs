@@ -56,10 +56,21 @@ export class TasksService {
     return task;
   }
 
-  getTasks(searchDto: SearchTaskDto): Promise<TaskEntity[]> {
+  async getTasks(searchDto: SearchTaskDto): Promise<TaskEntity[]> {
     const { searchTerm, taskStatus } = searchDto;
     // if search term entered
-    const task: TaskEntity = null;
-    return null;
+    const taskQuery = this.taskRepository.createQueryBuilder('task_entity');
+    if (taskStatus) {
+      taskQuery.andWhere('task_entity.taskStatus = :taskStatus', {
+        taskStatus,
+      });
+    }
+    if (searchTerm) {
+      taskQuery.andWhere(
+        'LOWER(task_entity.title) LIKE LOWER(:searchTerm) OR LOWER(task_entity.description) LIKE LOWER(:searchTerm)',
+        { searchTerm: `%${searchTerm}%` },
+      );
+    }
+    return await taskQuery.getMany();
   }
 }
