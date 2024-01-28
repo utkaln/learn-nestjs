@@ -183,9 +183,45 @@ constructor(
 
 9. Under exceptional cases to override the value from the environment file, the value of the env variable can be passed as CLI to start script. Example: `SAMPLE_ENV_VALUE=overridden_value yarn start:dev`
 
+#### Drive DB connection using Config in Asynchronous way
+
+- DB Connection is established via ORM module. To read config values it must be implemented in async way as shown below from app.module.ts :
+  ```ts
+  TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        autoLoadEntities: true,
+        synchronize: true,
+        host: configService.get('DB_HOST'),
+        port: configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_DATABASE'),
+      }),
+  ```
+
+### Config Schema Validation
+
+- Schema can be validated using package `joi` to ensure no required environment values are not present. This is done by adding package `yarn add joi`
+- Add a file at the root level named `config.schema.ts` and add rules as shown in the example file here [config.schema.ts](./config.schema.ts)
+- Update [app.module.ts](./src/app.module.ts) to add the schema validation as parameter to Config block:
+  ```ts
+  ConfigModule.forRoot({
+      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      validationSchema: configValidationSchema,
+    }),
+  ```
+
+### CORS - Cross Origin Resource Sharing
+
+- Nest js allows cors mechanism by adding the following code in main.ts file `app.enableCors();`
+
 ### References:
 
 - https://docs.nestjs.com - Official nest js documentation
 - https://jwt.io - Validate JWT Token
 - https://github.com/nestjs/nest/tree/master/sample/21-serializer - Apply Serializable Interceptor to hide data
 - https://docs.nestjs.com/techniques/configuration - NestJS Configuration to control environment variables
+- https://docs.nestjs.com/techniques/configuration#schema-validation - Schema validation for Config confirmation
