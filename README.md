@@ -9,23 +9,6 @@
 - **NestJS CLI**: `yarn global add @nestjs/cli`
 - **Generate UUID**: `yarn add uuid`
 
-### Get Familiar with Terms
-
-| Term                   | Interpretation                                                                                        | Usage                                    |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Modules                | File that serves as entry point. Resembles with a set of capabilities of a Feature in the application | Annotate with decorator - @Module        |
-| Controllers            | Instantiated within module. Control incoming requests and return response to client                   | Annotate - @Controller , @Get, @Post ... |
-| Services               | Type of providers, but are of type singleton. Called from Controllers                                 | @Injectable                              |
-| Providers              | Dependencies injected into Modules. Used in Modules                                                   | @Injectable                              |
-| Exports                | Providers to export to other modules                                                                  |                                          |
-| Pipes                  |                                                                                                       |                                          |
-| AuthN, AuthZ using JWT |                                                                                                       |                                          |
-| TypeORM                |                                                                                                       |                                          |
-| QueryBuilder (ORM)     |                                                                                                       |                                          |
-| Password Hashing       |                                                                                                       |                                          |
-| Deployment of UI (S3)  |                                                                                                       |                                          |
-| Deployment of Backend  |                                                                                                       |                                          |
-
 ### Getting Started
 
 - Generate a project from CLI: `nest new <app_name>`
@@ -34,6 +17,11 @@
 - To create a new nest component such as module, service or controller, a best practice is to use nest cli to generate it using command `nest g <component_type> <component_name>`
 - Generate Controller using CLI : `nest g controller <name> --no-spec` [do not create default test file, remember to send the same name for auto update]
 - Generate Service using CLI : `nest g service <name> --no-spec` [remember to send the same name for auto update]
+- For DB Postgres SQL is used that runs on Docker. To start using Postgres on Docker run: `docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres`
+  - Check container status : `docker container ls`
+  - Stop container: `docker container stop postgres-nest`
+  - Remove postgres: `docker container rm postgres-nest`
+- Create server and database in PGAdmin tool. The database name in this project is : `nest-task-tutorial`
 
 ### Project Structure
 
@@ -92,6 +80,27 @@ flowchart LR
 - DTOs recommended to be created as Classes instead of interfaces
 - It is different than creating models for entities
 - DTOs are not mandatory, but useful for data consistency
+
+6. **Pipes** - Used to modify, validate, handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
+
+- Injected to controllers
+- **Handler Pipe** : Handles the incoming request, throws exception if fails. Implemented by adding two packages: `yarn add class-validator class-transformer`. Example implementation in [create-task.dto.ts](./nest-basic-app/src/tasks/dto/create-task.dto.ts)
+- **Parameter Pipe**: Handles at parameter level, slimmer implementation than Handler pipe, but tightly coupled implementation
+- **Global Pipe**: Works at application level. As a result it applies to every handler and every parameter. Example implementation: [main.ts](./nest-basic-app/src/main.ts)
+
+7. **Error Handling** - Nest JS makes error handling easy, by just throwing error in single statement. Example [getTaskStatus-Service](./nest-basic-app/src/tasks/tasks.service.ts)
+
+- **Enum Validation** - Nest JS has decorator method to validate Enum values, example here is to validate task status.
+
+8. **ObjectRelationalMapping** (ORM) - Technique that allows database interaction from application code using object oriented approach
+
+- This helps in automatic data element mapping, reusability, no need to write SQL queries
+- `TypeORM` is the typescript library widely used [TypeORM - Documentation](https://typeorm.io). [NestJS - Database Interaction](https://docs.nestjs.com/techniques/database)
+- To use ORM with postgres sql following packages to be added by running: `yarn add typeorm @nestjs/typeorm pg`
+- For temporary use typeORM can be imported into App module. However more optimal approach is to have ORM in its own module
+- Entities must be defined with file extension as `*.entity.ts`. This name allows auto load of entity
+- **Data Mapper** is the preferred approach for working with Database compared to Active Records approach, since Data Mapper allows seggregation of definition from functions. Example of implementation: [task.entity.ts](./nest-basic-app/src/tasks/tasks.entity.ts) and [tasks.repository.ts](./nest-basic-app/src/tasks/tasks.repository.ts)
+- To make a Task repository available, it must be injected as depndency in the module it is referred from. Example: [task.module.ts](./nest-basic-app/src/tasks/tasks.module.ts)
 
 ### References:
 
