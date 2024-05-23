@@ -1,0 +1,9 @@
+# Site Settings
+title: Nest JS Basics
+author:
+  name: Utkal Nayak
+  email: nayak.utkal@gmail.com
+
+# Build settings
+remote_theme: lewismiddleton/cayman-dark
+markdown: GFM
