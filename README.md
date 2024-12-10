@@ -6,7 +6,7 @@
 ### Installations
 
 - Latest Node, NPM, Yarn
-- **NestJS CLI**: `yarn global add @nestjs/cli`
+- **NestJS CLI**: `yarn global add @nestjs/cli` or `npm -g install @nestjs/cli`
 - **Generate UUID**: `yarn add uuid`
 
 ### Getting Started
@@ -15,9 +15,13 @@
 - The file named `app.module.ts` is the root file to begin, this is referred in `main.ts`. Leaving behind these two files in source folder, every other starter file can be removed.
 - Run the application `yarn start:dev`. This runs the application in watch mode, so it restarts automatically with every change
 - To create a new nest component such as module, service or controller, a best practice is to use nest cli to generate it using command `nest g <component_type> <component_name>`
+- Generate Module using CLI : `nest g module <name> --no-spec` [do not create default test file, remember to send the same name for auto update]
 - Generate Controller using CLI : `nest g controller <name> --no-spec` [do not create default test file, remember to send the same name for auto update]
 - Generate Service using CLI : `nest g service <name> --no-spec` [remember to send the same name for auto update]
-- For DB Postgres SQL is used that runs on Docker. To start using Postgres on Docker run: `docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres`
+- For DB Postgres SQL is used that runs on Docker. To start using Postgres on Docker run:
+   ```sh
+    docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+   ```
   - Check container status : `docker container ls`
   - Stop container: `docker container stop postgres-nest`
   - Remove postgres: `docker container rm postgres-nest`
