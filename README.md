@@ -77,17 +77,46 @@ flowchart LR
 4. **Service** - Class that has the business logic that is usually invoked from Controller.
 
 - Service must be annotated with `@Injectable` annotation to be imported into handler methods inside controllers initiated as **Singleton** pattern.
-- **Providers** can be class, object or a service that is made available to controllers when annotated with `@Injectable`
+- **Providers** can be class, object or a service that are made available to controllers when annotated with `@Injectable`
 - A **Service** or **Provider** to be **Singleton** type must have annotation as `@Injectable`
+- Example of how to declare a **Provider** and how to use in controller
+    - provider code: (Define as Injectable)
+      ```ts
+      @Injectable()
+      export class PremiumService {}
+      ```
+    - module code: (Export the provider to be used)
+      ```ts
+      import { PremiumService } from './premium.service';
+      @Module({
+        providers: [PremiumService]
+      })
+      export class PremiumModule {}
+      ```
+    - controller code: (Use the provider object)
+      ```ts
+      import { PremiumService } from './premium.service';
+
+      @Controller('premium')
+      export class PremiumController {
+          constructor(private premiumService: PremiumService){}
+      
+          @Get()
+          async getAllPremiumFeatures(){
+              return await this.premiumService.getAllPremiumFeatures();
+          }
+      
+      }
+      ```
 
 5. **Data Transfer Object (DTO)** - Object to transfer data through network
 
-- Responsible for storage, retrieval, serialization of data
-- DTOs recommended to be created as Classes instead of interfaces
+- Responsible for storage, retrieval, and serialization of data
+- DTOs are recommended to be created as Classes instead of interfaces
 - It is different than creating models for entities
 - DTOs are not mandatory, but useful for data consistency
 
-6. **Pipes** - Used to modify, validate, handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
+6. **Pipes** - Used to modify, validate, and handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
 
 - Injected to controllers
 - **Handler Pipe** : Handles the incoming request, throws exception if fails. Implemented by adding two packages: `yarn add class-validator class-transformer`. Example implementation in [create-task.dto.ts](./nest-basic-app/src/tasks/dto/create-task.dto.ts)
