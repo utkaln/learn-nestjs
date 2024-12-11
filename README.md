@@ -77,6 +77,8 @@ flowchart LR
 4. **Service** - Class that has the business logic that is usually invoked from Controller.
 
 - Service must be annotated with `@Injectable` annotation to be imported into handler methods inside controllers initiated as **Singleton** pattern.
+- **Providers** can be class, object or a service that is made available to controllers when annotated with `@Injectable`
+- A **Service** or **Provider** to be **Singleton** type must have annotation as `@Injectable`
 
 5. **Data Transfer Object (DTO)** - Object to transfer data through network
 
