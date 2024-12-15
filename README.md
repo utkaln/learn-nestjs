@@ -115,6 +115,81 @@ flowchart LR
 - DTOs are recommended to be created as Classes instead of interfaces
 - It is different than creating models for entities
 - DTOs are not mandatory, but useful for data consistency
+- Example of an object without DTO (Note how much redundancy and exposure to human oversight)
+   - Object Model
+     ```typescript
+      export interface Feature{
+       feature_type:FeatureType;
+       user_id:string;
+       first_name:string;
+       last_name:string;
+       address:string;
+       city:string;
+       state:string;
+       zipcode:string;
+       email:string;
+       phone:string;
+       member_since:string;
+     }
+
+      export enum FeatureType {
+          GUEST = "guest",
+          TRIAL = "trial",
+          PREMIUM = "premium",
+          ADMIN = "admin"
+      }
+     ```
+   - Service class that is responsible for processing business logic
+     ```typescript
+      setPremiumFeature(feature_type:FeatureType,first_name:string, last_name:string, address:string, city:string, state:string, zipcode:string, email:string, phone:string, member_since:string):Feature{
+        const feature: Feature = {
+            feature_type,
+            user_id:uuidv4(),
+            first_name,
+            last_name,
+            address,
+            city,
+            state,
+            zipcode,
+            email,
+            phone,
+            member_since,
+        }
+        this.premium_features.push(feature);
+        return feature;
+     }
+     ```
+   - Controller class to receive input from http request
+     ```typescript
+      @Post()
+     createPremiumFeature(
+       @Body('feature_type') feature_type: FeatureType,
+       @Body('first_name') first_name: string,
+       @Body('last_name') last_name: string,
+       @Body('address') address: string,
+       @Body('city') city: string,
+       @Body('state') state: string,
+       @Body('zipcode') zipcode: string,
+       @Body('email') email: string,
+       @Body('phone') phone: string,
+       @Body('member_since') member_since: string,
+     ): Feature {
+       return this.premiumService.setPremiumFeature(
+         feature_type,
+         first_name,
+         last_name,
+         address,
+         city,
+         state,
+         zipcode,
+         email,
+         phone,
+         member_since,
+       );
+     }
+     ```
+- Example of the same object using DTO
+   - 
 
 6. **Pipes** - Used to modify, validate, and handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
 
