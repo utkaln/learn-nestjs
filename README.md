@@ -159,7 +159,7 @@ flowchart LR
         return feature;
      }
      ```
-   - Controller class to receive input from http request
+ - Controller class to receive input from http request
      ```typescript
       @Post()
      createPremiumFeature(
@@ -244,7 +244,7 @@ flowchart LR
        return feature;
      }
      ```
-    - Controller class to receive input from http request
+  - Controller class to receive input from http request
      ```typescript
       createPremiumFeature(
        @Body() featureDto: FeatureDto): Feature {
@@ -254,10 +254,11 @@ flowchart LR
 
 6. **Pipes** - Used to modify, validate, and handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
 
-- Injected to controllers
+- Injected to controllers and has a Transform() method implemented internally
 - **Handler Pipe** : Handles the incoming request, throws exception if fails. Implemented by adding two packages: `yarn add class-validator class-transformer`. Example implementation in [create-task.dto.ts](./nest-basic-app/src/tasks/dto/create-task.dto.ts)
 - **Parameter Pipe**: Handles at parameter level, slimmer implementation than Handler pipe, but tightly coupled implementation
 - **Global Pipe**: Works at application level. As a result it applies to every handler and every parameter. Example implementation: [main.ts](./nest-basic-app/src/main.ts)
+- **Recommendation** - Use DTO with Handler Pipes for simple and effective handling
 
 7. **Error Handling** - Nest JS makes error handling easy, by just throwing error in single statement. Example [getTaskStatus-Service](./nest-basic-app/src/tasks/tasks.service.ts)
 
