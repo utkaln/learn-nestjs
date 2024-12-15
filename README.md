@@ -189,7 +189,68 @@ flowchart LR
      }
      ```
 - Example of the same object using DTO
-   - 
+   - Object Model
+     ```typescript
+      export interface Feature{
+       feature_type:FeatureType;
+       user_id:string;
+       first_name:string;
+       last_name:string;
+       address:string;
+       city:string;
+       state:string;
+       zipcode:string;
+       email:string;
+       phone:string;
+       member_since:string;
+     }
+
+      export enum FeatureType {
+          GUEST = "guest",
+          TRIAL = "trial",
+          PREMIUM = "premium",
+          ADMIN = "admin"
+      }
+     ```
+  - Service class that is responsible for processing business logic
+     ```typescript
+      setGuestFeature(featureDto: FeatureDto): Feature {
+         //deconstruct elements from feature dto
+        const {
+         first_name,
+         last_name,
+         address,
+         city,
+         state,
+         zipcode,
+         email,
+         phone,
+         member_since,
+       } = featureDto;
+       const feature: Feature = {
+         feature_type: FeatureType.GUEST,
+         user_id: uuidv4(),
+         first_name,
+         last_name,
+         address,
+         city,
+         state,
+         zipcode,
+         email,
+         phone,
+         member_since,
+       };
+       this.guest_features.push(feature);
+       return feature;
+     }
+     ```
+    - Controller class to receive input from http request
+     ```typescript
+      createPremiumFeature(
+       @Body() featureDto: FeatureDto): Feature {
+       return this.guestService.setGuestFeature(featureDto);
+     }
+     ```
 
 6. **Pipes** - Used to modify, validate, and handle error from request before passing in for further processing. More Info - [Class Validator](https://github.com/typestack/class-validator) implemented at application level
 
