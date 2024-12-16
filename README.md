@@ -20,7 +20,7 @@
 - Generate Service using CLI : `nest g service <name> --no-spec` [remember to send the same name for auto update]
 - For DB Postgres SQL is used that runs on Docker. To start using Postgres on Docker run:
    ```sh
-    docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+    docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=<redacted> -d postgres
    ```
   - Check container status : `docker container ls`
   - Stop container: `docker container stop postgres-nest`
@@ -264,13 +264,47 @@ flowchart LR
 
 - **Enum Validation** - Nest JS has decorator method to validate Enum values, example here is to validate task status.
 
-8. **ObjectRelationalMapping** (ORM) - Technique that allows database interaction from application code using object oriented approach
+8. **ObjectRelationalMapping** (ORM) - Technique that allows database interaction from application code using object-oriented approach
 
 - This helps in automatic data element mapping, reusability, no need to write SQL queries
 - `TypeORM` is the typescript library widely used [TypeORM - Documentation](https://typeorm.io). [NestJS - Database Interaction](https://docs.nestjs.com/techniques/database)
 - To use ORM with postgres sql following packages to be added by running: `yarn add typeorm @nestjs/typeorm pg`
 - For temporary use typeORM can be imported into App module. However more optimal approach is to have ORM in its own module
 - Entities must be defined with file extension as `*.entity.ts`. This name allows auto load of entity
+- Basic definition of `task.entity.ts` :
+  ```typescript
+   import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+   @Entity()
+   export class Feature {
+       
+       @Column()
+       feature_type:FeatureType;
+       
+       @PrimaryGeneratedColumn('uuid')
+       user_id:string;
+  }
+  ```
+- To use TypeORM entity in app.module use -
+  ```typescript
+   imports : [TypeOrmModule.forRoot(
+       {
+         type: 'postgres',
+         host: 'localhost',
+         port: 5432,
+         username: 'postgres',
+         password: '<redacted>',
+         database: 'db-name',
+         autoLoadEntities: true,
+         synchronize: true,
+       }
+     )
+  ]
+  ```
+- To use TypeORM entity in a sub module use -
+  ```typescript
+   imports: [TypeOrmModule.forFeature([FeatureRepository])],
+  ```
 - **Data Mapper** is the preferred approach for working with Database compared to Active Records approach, since Data Mapper allows seggregation of definition from functions. Example of implementation: [task.entity.ts](./nest-basic-app/src/tasks/tasks.entity.ts) and [tasks.repository.ts](./nest-basic-app/src/tasks/tasks.repository.ts)
 - To make a Task repository available, it must be injected as depndency in the module it is referred from. Example: [task.module.ts](./nest-basic-app/src/tasks/tasks.module.ts)
 
